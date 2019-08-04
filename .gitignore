@@ -1,3 +1,7 @@
 .vs
 *.csproj
+*.csproj.meta
+*.csproj.user
+*.csproj.user.meta
 *.sln
+*.sln.meta
