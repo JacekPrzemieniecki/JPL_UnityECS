@@ -1,0 +1,16 @@
+{
+    "name": "JPL_ECS",
+    "references": [
+        "Unity.Entities",
+        "Unity.Collections"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}
