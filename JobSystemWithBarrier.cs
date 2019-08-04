@@ -7,12 +7,12 @@ namespace JPL.ECS
             where TBarrier : EntityCommandBufferSystem
     {
         TBarrier _barrier;
-        protected sealed override void OnCreateManager()
+        protected sealed override void OnCreate()
         {
             _barrier = World.GetOrCreateSystem<TBarrier>();
-            OnCreateManager(_barrier);
+            OnCreate(_barrier);
         }
-        protected virtual void OnCreateManager(TBarrier barrier) { }
+        protected virtual void OnCreate(TBarrier barrier) { }
         protected sealed override JobHandle OnUpdate(JobHandle inputDeps)
         {
             var handle = OnUpdate(inputDeps, _barrier);
