@@ -16,6 +16,8 @@ namespace JPL.ECS
         protected void Set<T>(Entity entity, T value) where T : struct, IComponentData
             => EntityManager.SetComponentData(entity, value);
 
+        protected DynamicBuffer<T> AddBuffer<T>(Entity entity) where T : struct, IBufferElementData
+            => EntityManager.AddBuffer<T>(entity);
         protected void Add<T>(Entity entity, T value) where T : struct, IComponentData
             => EntityManager.AddComponentData(entity, value);
         protected void Add<T>(Entity entity) where T : struct, IComponentData
