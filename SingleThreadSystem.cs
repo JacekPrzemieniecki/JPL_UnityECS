@@ -45,6 +45,9 @@ namespace JPL.ECS
             return e;
         }
 
+        protected void Destroy(Entity e)
+            => EntityManager.DestroyEntity(e);
+
         protected DynamicBuffer<T> AddBuffer<T>(Entity entity) where T : struct, IBufferElementData
             => EntityManager.AddBuffer<T>(entity);
         protected void Add<T>(Entity entity, T value) where T : struct, IComponentData
