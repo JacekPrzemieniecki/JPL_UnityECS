@@ -1,11 +1,21 @@
 ﻿using System.Diagnostics;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 
 namespace JPL.ECS
 {
-    public abstract class SingleThreadSystem : ComponentSystem
+    [AlwaysSynchronizeSystem]
+    public abstract class SingleThreadSystem : JobComponentSystem
     {
+        protected virtual void OnUpdate() { }
+
+        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        {
+            OnUpdate();
+            return default;
+        }
+
         protected DynamicBuffer<T> GetBuffer<T>(Entity entity) where T : struct, IBufferElementData
             => EntityManager.GetBuffer<T>(entity);
         protected T Get<T>(Entity entity) where T : struct, IComponentData
@@ -20,29 +30,46 @@ namespace JPL.ECS
             => EntityManager.CreateEntity();
         protected Entity CreateEntity<T>(T value) where T : struct, IComponentData
         {
-            var e = CreateEntity();
-            Add(e, value);
+            var e = EntityManager.CreateEntity(
+                ComponentType.ReadWrite<T>());
+            Set(e, value);
             return e;
         }
-        protected Entity CreateEntity<T0, T1>(T0 value0, T1 value1) 
+        protected Entity CreateEntity<T0, T1>(T0 value0, T1 value1)
             where T0 : struct, IComponentData
             where T1 : struct, IComponentData
         {
-            var e = CreateEntity();
-            Add(e, value0);
-            Add(e, value1);
+            var e = EntityManager.CreateEntity(
+                ComponentType.ReadWrite<T0>(),
+                ComponentType.ReadWrite<T1>());
+            Set(e, value0);
+            Set(e, value1);
             return e;
         }
-        protected Entity CreateEntity<T0, T1, T2>(T0 value0, T1 value1, T2 value2) 
+        protected Entity CreateEntity<T0, T1, T2>(T0 value0, T1 value1, T2 value2)
             where T0 : struct, IComponentData
             where T1 : struct, IComponentData
             where T2 : struct, IComponentData
         {
-            var e = CreateEntity();
-            Add(e, value0);
-            Add(e, value1);
-            Add(e, value2);
+            var e = EntityManager.CreateEntity(
+                ComponentType.ReadWrite<T0>(),
+                ComponentType.ReadWrite<T1>(),
+                ComponentType.ReadWrite<T2>());
+            Set(e, value0);
+            Set(e, value1);
+            Set(e, value2);
             return e;
+        }
+
+        protected NativeArray<Entity> Instantiate(NativeArray<Entity> prefabs, Allocator allocator)
+        {
+            var len = prefabs.Length;
+            var result = new NativeArray<Entity>(len, allocator);
+            for (int i = 0; i < len; i++)
+            {
+                result[i] = EntityManager.Instantiate(prefabs[i]);
+            }
+            return result;
         }
 
         protected void Destroy(Entity e)
@@ -70,7 +97,6 @@ namespace JPL.ECS
 
         protected bool Has<T>(Entity entity) where T : struct, IComponentData
             => EntityManager.HasComponent<T>(entity);
-
 
         [Conditional("UNITY_EDITOR")]
         protected void SetDebugName(Entity e, string name)
